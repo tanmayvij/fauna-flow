@@ -2,7 +2,14 @@ This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-
 
 ## Getting Started
 
-First, run the development server:
+Use Node.js 24 and npm 11, then install the locked dependencies:
+
+```bash
+nvm use
+npm ci
+```
+
+Run the development server:
 
 ```bash
 npm run dev
