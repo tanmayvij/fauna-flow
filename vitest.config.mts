@@ -7,6 +7,23 @@ export default defineConfig({
     tsconfigPaths: true,
   },
   test: {
-    environment: "jsdom",
+    projects: [
+      {
+        extends: true,
+        test: {
+          name: "unit",
+          include: ["tests/unit/**/*.test.ts"],
+          environment: "node",
+        },
+      },
+      {
+        extends: true,
+        test: {
+          name: "ui",
+          include: ["tests/ui/**/*.test.tsx"],
+          environment: "jsdom",
+        },
+      },
+    ],
   },
 });

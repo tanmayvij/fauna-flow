@@ -16,7 +16,9 @@
     "lint": "eslint",
     "format:check": "prettier --check .",
     "format:write": "prettier --write .",
-    "test": "vitest run"
+    "test": "vitest run",
+    "test:unit": "vitest run --project unit",
+    "test:ui": "vitest run --project ui"
   },
   "dependencies": {
     "next": "16.4.0",
