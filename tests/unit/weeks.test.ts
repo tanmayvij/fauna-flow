@@ -48,6 +48,23 @@ describe("getWeekOptions", () => {
     expect(previous.end).toEqual(new Date(2026, 9, 10));
   });
 
+  test("gives each week its date range on its own", () => {
+    // Monday, Oct 12 2026
+    const ranges = getWeekOptions(new Date(2026, 9, 12), 3).map(
+      (option) => option.range,
+    );
+
+    expect(ranges).toEqual([
+      "Oct 11 – Oct 12",
+      "Oct 4 – Oct 10",
+      "Sep 27 – Oct 3",
+    ]);
+  });
+
+  test("gives a single-day current week a single date as its range", () => {
+    expect(getWeekOptions(new Date(2026, 9, 11), 1)[0].range).toBe("Oct 11");
+  });
+
   test("returns the requested number of weeks", () => {
     expect(getWeekOptions(new Date(2026, 9, 12), 5)).toHaveLength(5);
   });

@@ -1,9 +1,11 @@
 import { describe, expect, test } from "vitest";
 import {
+  copyFileToMemory,
   formatFileSize,
   getFileExtension,
   hasAllowedExtension,
 } from "@/lib/files";
+import { unreadableFile } from "../helpers/unreadable-file";
 
 describe("formatFileSize", () => {
   test.each([
@@ -36,5 +38,26 @@ describe("hasAllowedExtension", () => {
 
   test("rejects unlisted extensions", () => {
     expect(hasAllowedExtension("usage.xlsx", [".csv"])).toBe(false);
+  });
+});
+
+describe("copyFileToMemory", () => {
+  test("copies the name, type and content into a new file", async () => {
+    const original = new File(["banana=50"], "delivery.txt", {
+      type: "text/plain",
+    });
+
+    const copy = await copyFileToMemory(original);
+
+    expect(copy).not.toBe(original);
+    expect(copy.name).toBe("delivery.txt");
+    expect(copy.type).toBe("text/plain");
+    expect(await copy.text()).toBe("banana=50");
+  });
+
+  test("fails when the original can no longer be read", async () => {
+    await expect(
+      copyFileToMemory(unreadableFile("usage.csv")),
+    ).rejects.toMatchObject({ name: "NotReadableError" });
   });
 });
