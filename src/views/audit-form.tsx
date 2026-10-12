@@ -9,9 +9,10 @@ import {
 import { runAuditAction } from "@/app/actions";
 import { AUDIT_SOURCES } from "@/constants/audit-sources";
 import { AUDIT_WEEK_COUNT } from "@/constants/audit-weeks";
+import { MAX_UPLOAD_TOTAL_BYTES } from "@/constants/upload-limits";
 import { FileDropzone } from "@/components/file-upload/file-dropzone";
 import { Spinner } from "@/components/shared/spinner";
-import { copyFileToMemory } from "@/lib/files";
+import { copyFileToMemory, formatFileSize } from "@/lib/files";
 import { getWeekOptions } from "@/lib/weeks";
 import type { AuditActionState, AuditSourceId } from "@/types/audit";
 import { AuditResults } from "@/components/audit/audit-results";
@@ -46,6 +47,17 @@ export function AuditForm() {
     previous: AuditActionState,
     selected: SelectedFiles,
   ): Promise<AuditActionState> {
+    const totalBytes = AUDIT_SOURCES.reduce(
+      (sum, source) => sum + (selected[source.id]?.size ?? 0),
+      0,
+    );
+    if (totalBytes > MAX_UPLOAD_TOTAL_BYTES) {
+      return {
+        status: "error",
+        message: `The files are too large to upload together (${formatFileSize(totalBytes)}). The combined maximum is ${formatFileSize(MAX_UPLOAD_TOTAL_BYTES)}.`,
+      };
+    }
+
     const formData = new FormData();
     for (const source of AUDIT_SOURCES) {
       const file = selected[source.id];

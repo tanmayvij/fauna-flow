@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import { useId, useRef, useState, type DragEvent } from "react";
+import { MAX_UPLOAD_TOTAL_BYTES } from "@/constants/upload-limits";
 import { formatFileSize, hasAllowedExtension } from "@/lib/files";
 
 interface FileDropzoneProps {
@@ -32,6 +33,13 @@ export function FileDropzone({
 
     if (!hasAllowedExtension(candidate.name, extensions)) {
       setError(`Only ${allowedLabel} files are accepted.`);
+      return;
+    }
+
+    if (candidate.size > MAX_UPLOAD_TOTAL_BYTES) {
+      setError(
+        `File is too large (${formatFileSize(candidate.size)}). The maximum is ${formatFileSize(MAX_UPLOAD_TOTAL_BYTES)}.`,
+      );
       return;
     }
 
