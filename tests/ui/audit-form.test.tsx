@@ -6,7 +6,7 @@ import {
   screen,
   waitFor,
 } from "@testing-library/react";
-import { afterEach, describe, expect, test, vi } from "vitest";
+import { afterEach, assert, describe, expect, test, vi } from "vitest";
 import { runAuditAction } from "@/app/actions";
 import { AuditForm } from "@/views/audit-form";
 import type { AuditActionState } from "@/types/audit";
@@ -150,7 +150,8 @@ describe("running the audit", () => {
     fireEvent.click(runButton());
 
     await waitFor(() => expect(runAuditAction).toHaveBeenCalledTimes(1));
-    const formData = vi.mocked(runAuditAction).mock.calls[0][1];
+    const formData = vi.mocked(runAuditAction).mock.lastCall?.[1];
+    assert(formData);
     expect(
       ["delivery", "usage", "inventory"].map(
         (name) => (formData.get(name) as File).name,

@@ -1,5 +1,5 @@
 import { describe, expect, test } from "vitest";
-import { getWeekOptions, parseDateKey, toDateKey } from "@/lib/weeks";
+import { getWeekOptions, toDateKey } from "@/lib/weeks";
 
 function labelsFor(today: Date) {
   return getWeekOptions(today, 3).map((option) => option.label);
@@ -39,13 +39,14 @@ describe("getWeekOptions", () => {
   });
 
   test("identifies each week by its Sunday at midnight", () => {
-    const [current, previous] = getWeekOptions(new Date(2026, 9, 12, 23), 2);
-
-    expect(current.id).toBe("2026-10-11");
-    expect(current.start).toEqual(new Date(2026, 9, 11));
-    expect(current.end).toEqual(new Date(2026, 9, 12));
-    expect(previous.id).toBe("2026-10-04");
-    expect(previous.end).toEqual(new Date(2026, 9, 10));
+    expect(getWeekOptions(new Date(2026, 9, 12, 23), 2)).toMatchObject([
+      {
+        id: "2026-10-11",
+        start: new Date(2026, 9, 11),
+        end: new Date(2026, 9, 12),
+      },
+      { id: "2026-10-04", end: new Date(2026, 9, 10) },
+    ]);
   });
 
   test("gives each week its date range on its own", () => {
@@ -62,7 +63,9 @@ describe("getWeekOptions", () => {
   });
 
   test("gives a single-day current week a single date as its range", () => {
-    expect(getWeekOptions(new Date(2026, 9, 11), 1)[0].range).toBe("Oct 11");
+    expect(getWeekOptions(new Date(2026, 9, 11), 1)).toMatchObject([
+      { range: "Oct 11" },
+    ]);
   });
 
   test("returns the requested number of weeks", () => {
@@ -70,11 +73,8 @@ describe("getWeekOptions", () => {
   });
 });
 
-describe("date keys", () => {
-  test("round-trip a local date", () => {
-    const date = new Date(2026, 0, 5);
-
-    expect(toDateKey(date)).toBe("2026-01-05");
-    expect(parseDateKey("2026-01-05")).toEqual(date);
+describe("toDateKey", () => {
+  test("formats a local date as YYYY-MM-DD", () => {
+    expect(toDateKey(new Date(2026, 0, 5))).toBe("2026-01-05");
   });
 });

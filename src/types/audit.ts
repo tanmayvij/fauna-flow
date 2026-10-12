@@ -57,7 +57,7 @@ export type AuditFiles = Record<AuditSourceId, string>;
 /** Where an input file is malformed, in a form that can be shown or logged. */
 export interface InputProblem {
   source: AuditSourceId;
-  location?: string;
+  location?: string | undefined;
   message: string;
 }
 

@@ -158,5 +158,7 @@ export function AuditForm() {
 
 function selectedWeekRange(weekId: string | null): string {
   const weeks = getWeekOptions(new Date(), AUDIT_WEEK_COUNT);
-  return (weeks.find((week) => week.id === weekId) ?? weeks[0]).range;
+  const week = weeks.find((option) => option.id === weekId) ?? weeks[0];
+  if (!week) throw new Error("AUDIT_WEEK_COUNT must be at least 1");
+  return week.range;
 }

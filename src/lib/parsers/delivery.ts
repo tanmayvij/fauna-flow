@@ -62,11 +62,11 @@ function splitAtFirst(line: string, separator: string): [string, string?] {
 
 function readDeliveryValue(raw: string): QuantityResult {
   const value = raw.trim();
-  const opening = value[0];
+  const quote = QUOTES.find((candidate) => value.startsWith(candidate));
 
-  if (!QUOTES.includes(opening)) return readQuantity(value);
+  if (quote === undefined) return readQuantity(value);
 
-  if (value.length < 2 || value.at(-1) !== opening) {
+  if (value.length < 2 || !value.endsWith(quote)) {
     return { ok: false, message: `Quantity has unmatched quotes: ${value}` };
   }
   return readQuantity(value.slice(1, -1));

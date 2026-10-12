@@ -2,7 +2,7 @@
 
 import { useId, useMemo, useSyncExternalStore } from "react";
 import { AUDIT_WEEK_COUNT } from "@/constants/audit-weeks";
-import { getWeekOptions, parseDateKey, toDateKey } from "@/lib/weeks";
+import { getWeekOptions } from "@/lib/weeks";
 import type { WeekOption } from "@/types/weeks";
 
 interface WeekSelectProps {
@@ -12,12 +12,12 @@ interface WeekSelectProps {
 
 export function WeekSelect({ value, onChange }: WeekSelectProps) {
   const selectId = useId();
-  const todayKey = useTodayKey();
+  const today = useToday();
 
   const options = useMemo(
     () =>
-      todayKey ? getWeekOptions(parseDateKey(todayKey), AUDIT_WEEK_COUNT) : [],
-    [todayKey],
+      today === null ? [] : getWeekOptions(new Date(today), AUDIT_WEEK_COUNT),
+    [today],
   );
 
   return (
@@ -47,13 +47,15 @@ export function WeekSelect({ value, onChange }: WeekSelectProps) {
 }
 
 /**
- * Today's date in the viewer's time zone. It is null while prerendering,
- * because the build server's clock and time zone are not the viewer's.
+ * Local midnight of today in the viewer's time zone, as a timestamp: a number
+ * stays equal all day, as `useSyncExternalStore` requires of a snapshot. It is
+ * null while prerendering, because the build server's clock and time zone are
+ * not the viewer's.
  */
-function useTodayKey(): string | null {
+function useToday(): number | null {
   return useSyncExternalStore(
     subscribeToNothing,
-    () => toDateKey(new Date()),
+    () => new Date().setHours(0, 0, 0, 0),
     () => null,
   );
 }

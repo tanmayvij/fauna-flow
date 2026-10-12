@@ -1,14 +1,20 @@
-# Verify code quality on pushing to main
+# Verify code quality on pull requests and on pushing to main
 name: CI
 
 on:
   push:
     branches:
       - main
+  pull_request:
 
 jobs:
   checks:
     runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        # The oldest supported version, then each newer LTS line (see package.json engines)
+        node-version: ["22.13.0", 24, 26]
 
     steps:
       - name: Check out repository
@@ -17,7 +23,7 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 24
+          node-version: ${{ matrix.node-version }}
           cache: npm
 
       - name: Install dependencies

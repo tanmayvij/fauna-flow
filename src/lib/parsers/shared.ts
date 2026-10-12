@@ -3,13 +3,13 @@ import type { QuantityResult } from "@/types/parsers";
 
 interface InputFormatErrorOptions {
   /** Where in the file, e.g. `line 3` or `index 1`; absent for whole-file problems. */
-  location?: string;
+  location?: string | undefined;
   cause?: unknown;
 }
 
 /** Thrown when an input file can't be read, naming where the problem is. */
 export class InputFormatError extends Error {
-  readonly location?: string;
+  readonly location: string | undefined;
 
   constructor(
     readonly source: AuditSourceId,

@@ -36,11 +36,6 @@ export function toDateKey(date: Date): string {
   return `${date.getFullYear()}-${month}-${day}`;
 }
 
-export function parseDateKey(key: string): Date {
-  const [year, month, day] = key.split("-").map(Number);
-  return new Date(year, month - 1, day);
-}
-
 function describeWeeksAgo(weeksAgo: number): string {
   if (weeksAgo === 0) return "This week";
   if (weeksAgo === 1) return "Last week";
