@@ -1,0 +1,8 @@
+[
+  { "item": "banana", "quantity": 18 },
+  { "item": "fish", "quantity": 5 },
+  { "item": "hay", "quantity": 105 },
+  { "item": "meat", "quantity": 37 },
+  { "item": "carrots", "quantity": 7 },
+  { "item": "lettuce", "quantity": 0 }
+]

@@ -1,0 +1,6 @@
+banana=50
+fish=100
+hay=200
+meat=75
+lettuce=
+carrots="20"
