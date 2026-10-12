@@ -1,4 +1,5 @@
-import type { AuditSourceId } from "@/constants/audit-sources";
+import type { AuditSourceId } from "@/types/audit";
+import type { QuantityResult } from "@/types/parsers";
 
 interface InputFormatErrorOptions {
   /** Where in the file, e.g. `line 3` or `index 1`; absent for whole-file problems. */
@@ -20,18 +21,6 @@ export class InputFormatError extends Error {
     this.location = location;
   }
 }
-
-interface ValidQuantity {
-  ok: true;
-  value: number;
-}
-
-interface InvalidQuantity {
-  ok: false;
-  message: string;
-}
-
-export type QuantityResult = ValidQuantity | InvalidQuantity;
 
 const WHOLE_NUMBER = /^\d+$/;
 

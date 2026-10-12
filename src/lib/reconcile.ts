@@ -1,46 +1,10 @@
+import type { AuditLine, AuditReport, AuditSummary } from "@/types/audit";
+
 interface ReconcileInput {
   /** Total delivered per item; `null` when a delivery value was unusable. */
   delivered: ReadonlyMap<string, number | null>;
   used: ReadonlyMap<string, number>;
   inventory: ReadonlyMap<string, number>;
-}
-
-type UnknownReason =
-  "invalid-delivery" | "missing-delivery" | "missing-inventory";
-
-interface OkLine {
-  item: string;
-  status: "ok";
-  expected: number;
-  actual: number;
-}
-
-interface DiscrepancyLine {
-  item: string;
-  status: "discrepancy";
-  expected: number;
-  actual: number;
-  /** Actual minus expected: negative is a shortage, positive a surplus. */
-  difference: number;
-}
-
-interface UnknownLine {
-  item: string;
-  status: "unknown";
-  reason: UnknownReason;
-}
-
-type AuditLine = OkLine | DiscrepancyLine | UnknownLine;
-
-interface AuditSummary {
-  ok: number;
-  discrepancies: number;
-  unknown: number;
-}
-
-interface AuditReport {
-  lines: readonly AuditLine[];
-  summary: AuditSummary;
 }
 
 /**

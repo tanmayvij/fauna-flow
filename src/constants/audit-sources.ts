@@ -1,13 +1,6 @@
+import type { AuditSource } from "@/types/audit";
+
 export const AUDIT_SOURCE_IDS = ["delivery", "usage", "inventory"] as const;
-
-export type AuditSourceId = (typeof AUDIT_SOURCE_IDS)[number];
-
-export interface AuditSource {
-  id: AuditSourceId;
-  title: string;
-  description: string;
-  extensions: readonly string[];
-}
 
 /** The three inputs the food audit reconciles, one per file format. */
 export const AUDIT_SOURCES: readonly AuditSource[] = [

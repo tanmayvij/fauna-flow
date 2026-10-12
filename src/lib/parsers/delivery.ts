@@ -1,15 +1,5 @@
-import {
-  normalizeItemName,
-  readQuantity,
-  splitLines,
-  type QuantityResult,
-} from "./shared";
-
-interface DeliveryWarning {
-  line: number; // 1-based line number in the delivery file.
-  item: string;
-  message: string;
-}
+import type { DeliveryWarning, QuantityResult } from "@/types/parsers";
+import { normalizeItemName, readQuantity, splitLines } from "./shared";
 
 interface ParsedDelivery {
   delivered: ReadonlyMap<string, number | null>; // Total delivered per item, or `null` when any of its values was unusable.

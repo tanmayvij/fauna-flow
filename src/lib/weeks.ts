@@ -1,10 +1,4 @@
-export interface WeekOption {
-  /** Local date of the week's Sunday, as `YYYY-MM-DD`. */
-  id: string;
-  label: string;
-  start: Date;
-  end: Date;
-}
+import type { WeekOption } from "@/types/weeks";
 
 const DAYS_PER_WEEK = 7;
 
@@ -24,10 +18,12 @@ export function getWeekOptions(today: Date, count: number): WeekOption[] {
     const start = addDays(currentSunday, -weeksAgo * DAYS_PER_WEEK);
     const end =
       weeksAgo === 0 ? startOfDay(today) : addDays(start, DAYS_PER_WEEK - 1);
+    const range = formatRange(start, end);
 
     return {
       id: toDateKey(start),
-      label: `${describeWeeksAgo(weeksAgo)} · ${formatRange(start, end)}`,
+      label: `${describeWeeksAgo(weeksAgo)} · ${range}`,
+      range,
       start,
       end,
     };

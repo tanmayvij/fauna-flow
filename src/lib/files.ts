@@ -23,3 +23,15 @@ export function hasAllowedExtension(
 ): boolean {
   return allowedExtensions.includes(getFileExtension(fileName));
 }
+
+/**
+ * Reads a picked file into memory. A picked file is only a reference to the
+ * file on disk, and browsers refuse to read it once it has changed there, so
+ * this rejects with `NotReadableError` if the file was edited, moved or deleted.
+ */
+export async function copyFileToMemory(file: File): Promise<File> {
+  return new File([await file.arrayBuffer()], file.name, {
+    type: file.type,
+    lastModified: file.lastModified,
+  });
+}

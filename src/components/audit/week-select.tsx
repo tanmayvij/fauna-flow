@@ -2,12 +2,8 @@
 
 import { useId, useMemo, useSyncExternalStore } from "react";
 import { AUDIT_WEEK_COUNT } from "@/constants/audit-weeks";
-import {
-  getWeekOptions,
-  parseDateKey,
-  toDateKey,
-  WeekOption,
-} from "@/lib/weeks";
+import { getWeekOptions, parseDateKey, toDateKey } from "@/lib/weeks";
+import type { WeekOption } from "@/types/weeks";
 
 interface WeekSelectProps {
   value: string | null;
