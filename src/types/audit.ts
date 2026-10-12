@@ -4,10 +4,10 @@ import type { DeliveryWarning } from "./parsers";
 export type AuditSourceId = (typeof AUDIT_SOURCE_IDS)[number];
 
 export interface AuditSource {
-  id: AuditSourceId;
-  title: string;
-  description: string;
-  extensions: readonly string[];
+  readonly id: AuditSourceId;
+  readonly title: string;
+  readonly description: string;
+  readonly extensions: readonly string[];
 }
 
 export type UnknownReason =
