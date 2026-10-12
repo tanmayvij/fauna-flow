@@ -4,7 +4,7 @@ export const SAMPLE_DELIVERY = [
   "hay=200",
   "meat=75",
   "lettuce=",
-  "carrots=\"20\"",
+  'carrots="20"',
 ].join("\n");
 
 export const SAMPLE_USAGE = [
