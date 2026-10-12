@@ -1,14 +1,19 @@
 import type { AuditSourceId } from "@/constants/audit-sources";
 
+interface InputFormatErrorOptions {
+  /** Where in the file, e.g. `line 3` or `index 1`; absent for whole-file problems. */
+  location?: string;
+  cause?: unknown;
+}
+
 /** Thrown when an input file can't be read, naming where the problem is. */
 export class InputFormatError extends Error {
-  /** Where in the file, e.g. `line 3` or `index 1`; absent for whole-file problems. */
   readonly location?: string;
 
   constructor(
     readonly source: AuditSourceId,
     message: string,
-    { location, cause }: { location?: string; cause?: unknown } = {},
+    { location, cause }: InputFormatErrorOptions = {},
   ) {
     super(message, { cause });
     this.name = "InputFormatError";
@@ -16,8 +21,17 @@ export class InputFormatError extends Error {
   }
 }
 
-export type QuantityResult =
-  { ok: true; value: number } | { ok: false; message: string };
+interface ValidQuantity {
+  ok: true;
+  value: number;
+}
+
+interface InvalidQuantity {
+  ok: false;
+  message: string;
+}
+
+export type QuantityResult = ValidQuantity | InvalidQuantity;
 
 const WHOLE_NUMBER = /^\d+$/;
 

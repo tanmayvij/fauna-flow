@@ -1,5 +1,10 @@
 import { InputFormatError, normalizeItemName } from "./shared";
 
+interface InventoryEntry {
+  item: string;
+  quantity: number;
+}
+
 /** Reads the end-of-week stock count: a JSON array of `{ item, quantity }`. */
 export function parseInventory(json: string): ReadonlyMap<string, number> {
   const entries = readEntries(json);
@@ -29,10 +34,7 @@ function readEntries(json: string): unknown[] {
   return data;
 }
 
-function readEntry(
-  entry: unknown,
-  location: string,
-): { item: string; quantity: number } {
+function readEntry(entry: unknown, location: string): InventoryEntry {
   if (!isRecord(entry)) {
     throw new InputFormatError("inventory", "Entry is not an object", {
       location,

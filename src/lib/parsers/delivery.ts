@@ -5,13 +5,13 @@ import {
   type QuantityResult,
 } from "./shared";
 
-export interface DeliveryWarning {
+interface DeliveryWarning {
   line: number; // 1-based line number in the delivery file.
   item: string;
   message: string;
 }
 
-export interface ParsedDelivery {
+interface ParsedDelivery {
   delivered: ReadonlyMap<string, number | null>; // Total delivered per item, or `null` when any of its values was unusable.
   warnings: readonly DeliveryWarning[];
 }

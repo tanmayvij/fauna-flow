@@ -8,6 +8,12 @@ import {
 const FOOD_COLUMN = "food";
 const QUANTITY_COLUMN = "quantity";
 
+/** Zero-based positions of the required columns, read from the header row. */
+interface ColumnPositions {
+  foodIndex: number;
+  quantityIndex: number;
+}
+
 /**
  * Reads the keeper usage log and totals the quantity used per food.
  * The file is trusted to be simple CSV: no quoted fields or embedded commas.
@@ -38,7 +44,7 @@ export function parseUsage(csv: string): ReadonlyMap<string, number> {
   return used;
 }
 
-function readHeader(header: string) {
+function readHeader(header: string): ColumnPositions {
   if (header.trim() === "") {
     throw new InputFormatError("usage", "Missing header row", {
       location: "line 1",
