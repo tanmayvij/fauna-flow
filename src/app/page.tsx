@@ -1,4 +1,4 @@
-import { AuditForm } from "@/components/audit/audit-form";
+import { AuditForm } from "@/views/audit-form";
 
 export default function Home() {
   return (

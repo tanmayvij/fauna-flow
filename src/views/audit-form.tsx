@@ -14,8 +14,8 @@ import { Spinner } from "@/components/shared/spinner";
 import { copyFileToMemory } from "@/lib/files";
 import { getWeekOptions } from "@/lib/weeks";
 import type { AuditActionState, AuditSourceId } from "@/types/audit";
-import { AuditResults } from "./audit-results";
-import { WeekSelect } from "./week-select";
+import { AuditResults } from "@/components/audit/audit-results";
+import { WeekSelect } from "@/components/audit/week-select";
 
 type SelectedFiles = Record<AuditSourceId, File | null>;
 
