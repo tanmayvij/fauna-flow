@@ -26,6 +26,52 @@ function onlyLine(input: Parameters<typeof audit>[0]) {
 }
 
 describe("reconcile", () => {
+  test.each([1, 2])(
+    "marks a difference beyond the safe integer range unknown (actual %i)",
+    (actual) => {
+      expect(
+        onlyLine({
+          delivered: { banana: 0 },
+          used: { banana: Number.MAX_SAFE_INTEGER },
+          inventory: { banana: actual },
+        }),
+      ).toEqual({
+        item: "banana",
+        status: "unknown",
+        reason: "unsafe-arithmetic",
+      });
+    },
+  );
+
+  test("preserves exact differences at both safe integer boundaries", () => {
+    const max = Number.MAX_SAFE_INTEGER;
+    expect(
+      onlyLine({ delivered: { banana: max }, inventory: { banana: 0 } }),
+    ).toMatchObject({ status: "discrepancy", difference: -max });
+    expect(
+      onlyLine({
+        delivered: { banana: 0 },
+        used: { banana: max },
+        inventory: { banana: 0 },
+      }),
+    ).toMatchObject({ status: "discrepancy", difference: max });
+  });
+
+  test("does not allow unsafe input totals to cancel into a false OK", () => {
+    const unsafe = Number.MAX_SAFE_INTEGER + 1;
+    expect(
+      onlyLine({
+        delivered: { banana: unsafe },
+        used: { banana: unsafe },
+        inventory: { banana: 0 },
+      }),
+    ).toEqual({
+      item: "banana",
+      status: "unknown",
+      reason: "unsafe-arithmetic",
+    });
+  });
+
   describe("expected stock is delivered minus used", () => {
     test("is OK when the count matches", () => {
       expect(

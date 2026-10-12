@@ -4,6 +4,31 @@ import { parseInventory } from "@/lib/parsers/inventory";
 import { captureError } from "../../helpers/capture-error";
 
 describe("parseInventory", () => {
+  test("accepts an accumulated total at the safe integer boundary", () => {
+    const json = JSON.stringify([
+      { item: "banana", quantity: Number.MAX_SAFE_INTEGER - 1 },
+      { item: "banana", quantity: 1 },
+    ]);
+    expect(parseInventory(json).get("banana")).toBe(Number.MAX_SAFE_INTEGER);
+  });
+
+  test("rejects inventory overflow at the entry that crosses the boundary", () => {
+    const error = captureError(() =>
+      parseInventory(
+        JSON.stringify([
+          { item: "banana", quantity: Number.MAX_SAFE_INTEGER },
+          { item: "banana", quantity: 1 },
+        ]),
+      ),
+    );
+    expect(error).toBeInstanceOf(InputFormatError);
+    expect(error).toMatchObject({
+      source: "inventory",
+      location: "index 1",
+      message: "banana: Total quantity exceeds the safe integer range",
+    });
+  });
+
   test("keeps items in the order they appear", () => {
     const json = JSON.stringify([
       { item: "meat", quantity: 37 },

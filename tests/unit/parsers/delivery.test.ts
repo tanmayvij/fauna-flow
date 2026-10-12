@@ -6,6 +6,32 @@ function deliveredFrom(text: string) {
 }
 
 describe("parseDelivery", () => {
+  test("accepts an accumulated total at the safe integer boundary", () => {
+    expect(
+      deliveredFrom("banana=9007199254740990\nbanana=1").get("banana"),
+    ).toBe(Number.MAX_SAFE_INTEGER);
+  });
+
+  test("marks an overflowing total unknown and never restores a partial total", () => {
+    expect(
+      parseDelivery(
+        `banana=${Number.MAX_SAFE_INTEGER}\nbanana=1\nbanana=1\nfish=5`,
+      ),
+    ).toEqual({
+      delivered: new Map([
+        ["banana", null],
+        ["fish", 5],
+      ]),
+      warnings: [
+        {
+          line: 2,
+          item: "banana",
+          message: "Total quantity exceeds the safe integer range",
+        },
+      ],
+    });
+  });
+
   describe("valid values", () => {
     test.each([
       ["banana=50", 50],

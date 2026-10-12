@@ -108,6 +108,21 @@ test("shows an unknown item with its reason and no numbers", () => {
   ).toBeTruthy();
 });
 
+test("explains an unsafe calculation without displaying rounded numbers", () => {
+  const report: AuditReport = {
+    lines: [{ item: "banana", status: "unknown", reason: "unsafe-arithmetic" }],
+    summary: { ok: 0, discrepancies: 0, unknown: 1 },
+  };
+  render(<AuditResults weekRange={WEEK} report={report} warnings={[]} />);
+
+  expect(cellTexts(rowFor("banana"))).toEqual([
+    "UnknownCalculation exceeds the safe integer range",
+    "—",
+    "—",
+    "—",
+  ]);
+});
+
 test("lists delivery file warnings when there are any", () => {
   render(<AuditResults weekRange={WEEK} report={REPORT} warnings={WARNINGS} />);
 
