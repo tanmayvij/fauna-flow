@@ -1,4 +1,6 @@
-export type AuditSourceId = "delivery" | "usage" | "inventory";
+export const AUDIT_SOURCE_IDS = ["delivery", "usage", "inventory"] as const;
+
+export type AuditSourceId = (typeof AUDIT_SOURCE_IDS)[number];
 
 export interface AuditSource {
   id: AuditSourceId;

@@ -1,5 +1,5 @@
 import { describe, expect, test } from "vitest";
-import { parseDelivery } from "@/lib/audit/parse-delivery";
+import { parseDelivery } from "@/lib/parsers/delivery";
 
 function deliveredFrom(text: string) {
   return parseDelivery(text).delivered;
@@ -111,7 +111,9 @@ describe("parseDelivery", () => {
     });
 
     test("ignores a leading byte order mark", () => {
-      expect(deliveredFrom("﻿banana=50")).toEqual(new Map([["banana", 50]]));
+      expect(deliveredFrom("\uFEFFbanana=50")).toEqual(
+        new Map([["banana", 50]]),
+      );
     });
 
     test("returns nothing for an empty file", () => {

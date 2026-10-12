@@ -1,6 +1,6 @@
 import { describe, expect, test } from "vitest";
-import { InputFormatError } from "@/lib/audit/errors";
-import { parseInventory } from "@/lib/audit/parse-inventory";
+import { InputFormatError } from "@/lib/parsers/shared";
+import { parseInventory } from "@/lib/parsers/inventory";
 import { captureError } from "../../helpers/capture-error";
 
 describe("parseInventory", () => {

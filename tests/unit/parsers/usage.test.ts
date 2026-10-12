@@ -1,6 +1,6 @@
 import { describe, expect, test } from "vitest";
-import { InputFormatError } from "@/lib/audit/errors";
-import { parseUsage } from "@/lib/audit/parse-usage";
+import { InputFormatError } from "@/lib/parsers/shared";
+import { parseUsage } from "@/lib/parsers/usage";
 import { captureError } from "../../helpers/capture-error";
 
 function csv(...rows: string[]) {
