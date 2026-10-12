@@ -81,6 +81,20 @@ describe("parseUsage", () => {
     });
 
     test.each([
+      ["empty", ",5"],
+      ["blank", "   ,5"],
+    ])("rejects a row whose food name is %s", (_, row) => {
+      const error = captureError(() => parseUsage(csv("fish,2", row)));
+
+      expect(error).toBeInstanceOf(InputFormatError);
+      expect(error).toMatchObject({
+        source: "usage",
+        location: "line 3",
+        message: "Missing food name",
+      });
+    });
+
+    test.each([
       [
         "food column",
         "item,quantity\nbanana,8",
