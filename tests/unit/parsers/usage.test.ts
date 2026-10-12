@@ -34,9 +34,9 @@ describe("parseUsage", () => {
 
   test("accepts an accumulated total at the safe integer boundary", () => {
     expect(
-      parseUsage(
-        csv(`banana,${Number.MAX_SAFE_INTEGER - 1}`, "banana,1"),
-      ).get("banana"),
+      parseUsage(csv(`banana,${Number.MAX_SAFE_INTEGER - 1}`, "banana,1")).get(
+        "banana",
+      ),
     ).toBe(Number.MAX_SAFE_INTEGER);
   });
 
