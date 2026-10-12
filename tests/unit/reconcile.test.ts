@@ -1,5 +1,5 @@
 import { describe, expect, test } from "vitest";
-import { reconcile } from "@/lib/audit/reconcile";
+import { reconcile } from "@/lib/reconcile";
 
 type Quantities<T> = Record<string, T>;
 
