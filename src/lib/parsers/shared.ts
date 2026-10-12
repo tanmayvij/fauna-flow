@@ -46,6 +46,18 @@ export function readQuantity(raw: string): QuantityResult {
   return { ok: true, value: Number(value) };
 }
 
+/** Adds validated quantities without allowing an inexact total to escape. */
+export function addQuantities(total: number, quantity: number): QuantityResult {
+  const value = total + quantity;
+  if (!Number.isSafeInteger(value)) {
+    return {
+      ok: false,
+      message: "Total quantity exceeds the safe integer range",
+    };
+  }
+  return { ok: true, value };
+}
+
 /** Splits text into lines, accepting Windows line endings and a leading BOM. */
 export function splitLines(text: string): string[] {
   const content = text.startsWith(BYTE_ORDER_MARK) ? text.slice(1) : text;

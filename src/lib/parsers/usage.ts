@@ -1,8 +1,9 @@
+import { CsvError, parse } from "csv-parse/sync";
 import {
+  addQuantities,
   InputFormatError,
   normalizeItemName,
   readQuantity,
-  splitLines,
 } from "./shared";
 
 const FOOD_COLUMN = "food";
@@ -14,21 +15,23 @@ interface ColumnPositions {
   quantityIndex: number;
 }
 
+interface UsageRecord {
+  cells: string[];
+  /** Physical line on which the CSV record ends (including multiline fields). */
+  line: number;
+}
+
 /**
  * Reads the keeper usage log and totals the quantity used per food.
- * The file is trusted to be simple CSV: no quoted fields or embedded commas.
+ * CSV syntax is decoded before applying the food and quantity rules.
  */
 export function parseUsage(csv: string): ReadonlyMap<string, number> {
-  const [header = "", ...rows] = splitLines(csv);
-  const { foodIndex, quantityIndex } = readHeader(header);
+  const [header, ...rows] = readRecords(csv);
+  const { foodIndex, quantityIndex } = readHeader(header?.cells ?? []);
   const used = new Map<string, number>();
 
-  rows.forEach((row, index) => {
-    if (row.trim() === "") return;
-
-    // Line 1 is the header, so the first row is line 2.
-    const location = `line ${index + 2}`;
-    const cells = row.split(",");
+  rows.forEach(({ cells, line }) => {
+    const location = `line ${line}`;
     const food = normalizeItemName(cells[foodIndex] ?? "");
     const quantity = readQuantity(cells[quantityIndex] ?? "");
 
@@ -38,22 +41,50 @@ export function parseUsage(csv: string): ReadonlyMap<string, number> {
     if (!quantity.ok) {
       throw new InputFormatError("usage", quantity.message, { location });
     }
-    used.set(food, (used.get(food) ?? 0) + quantity.value);
+    const total = addQuantities(used.get(food) ?? 0, quantity.value);
+    if (!total.ok) {
+      throw new InputFormatError("usage", `${food}: ${total.message}`, {
+        location,
+      });
+    }
+    used.set(food, total.value);
   });
 
   return used;
 }
 
-function readHeader(header: string): ColumnPositions {
-  if (header.trim() === "") {
+/** Keep the CSV library's syntax and location handling at the input boundary. */
+function readRecords(csv: string): UsageRecord[] {
+  const records: UsageRecord[] = [];
+  try {
+    parse(csv, {
+      bom: true,
+      skip_empty_lines: true,
+      trim: true,
+      on_record(cells: string[], info) {
+        records.push({ cells, line: info.lines });
+        return null;
+      },
+    });
+  } catch (error) {
+    if (!(error instanceof CsvError)) throw error;
+    throw new InputFormatError("usage", `Invalid CSV: ${error.message}`, {
+      location:
+        typeof error.lines === "number" ? `line ${error.lines}` : undefined,
+      cause: error,
+    });
+  }
+  return records;
+}
+
+function readHeader(header: string[]): ColumnPositions {
+  if (header.length === 0) {
     throw new InputFormatError("usage", "Missing header row", {
       location: "line 1",
     });
   }
 
-  const columns = header
-    .split(",")
-    .map((column) => column.trim().toLowerCase());
+  const columns = header.map((column) => column.trim().toLowerCase());
 
   return {
     foodIndex: findColumn(columns, FOOD_COLUMN),

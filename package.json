@@ -21,6 +21,7 @@
     "test:ui": "vitest run --project ui"
   },
   "dependencies": {
+    "csv-parse": "^7.0.3",
     "next": "16.4.0",
     "react": "19.3.0",
     "react-dom": "19.3.0"
