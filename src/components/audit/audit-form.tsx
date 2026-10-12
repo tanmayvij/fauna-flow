@@ -10,7 +10,7 @@ import { runAuditAction } from "@/app/actions";
 import { AUDIT_SOURCES } from "@/constants/audit-sources";
 import { AUDIT_WEEK_COUNT } from "@/constants/audit-weeks";
 import { FileDropzone } from "@/components/file-upload/file-dropzone";
-import { Spinner } from "@/components/ui/spinner";
+import { Spinner } from "@/components/shared/spinner";
 import { copyFileToMemory } from "@/lib/files";
 import { getWeekOptions } from "@/lib/weeks";
 import type { AuditActionState, AuditSourceId } from "@/types/audit";
