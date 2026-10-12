@@ -1,4 +1,4 @@
-import { InputFormatError, normalizeItemName } from "./shared";
+import { addQuantities, InputFormatError, normalizeItemName } from "./shared";
 
 interface InventoryEntry {
   item: string;
@@ -12,7 +12,13 @@ export function parseInventory(json: string): ReadonlyMap<string, number> {
 
   entries.forEach((entry, index) => {
     const { item, quantity } = readEntry(entry, `index ${index}`);
-    inventory.set(item, (inventory.get(item) ?? 0) + quantity);
+    const total = addQuantities(inventory.get(item) ?? 0, quantity);
+    if (!total.ok) {
+      throw new InputFormatError("inventory", `${item}: ${total.message}`, {
+        location: `index ${index}`,
+      });
+    }
+    inventory.set(item, total.value);
   });
 
   return inventory;

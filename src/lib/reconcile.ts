@@ -45,8 +45,17 @@ function reconcileItem(item: string, input: ReconcileInput): AuditLine {
     return { item, status: "unknown", reason: "missing-inventory" };
   }
 
-  const expected = delivered - (input.used.get(item) ?? 0);
+  const used = input.used.get(item) ?? 0;
+  if (![delivered, used, actual].every(Number.isSafeInteger)) {
+    return { item, status: "unknown", reason: "unsafe-arithmetic" };
+  }
+
+  const expected = delivered - used;
   const difference = actual - expected;
+
+  if (!Number.isSafeInteger(expected) || !Number.isSafeInteger(difference)) {
+    return { item, status: "unknown", reason: "unsafe-arithmetic" };
+  }
 
   if (difference === 0) return { item, status: "ok", expected, actual };
   return { item, status: "discrepancy", expected, actual, difference };

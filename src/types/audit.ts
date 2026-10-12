@@ -11,7 +11,10 @@ export interface AuditSource {
 }
 
 export type UnknownReason =
-  "invalid-delivery" | "missing-delivery" | "missing-inventory";
+  | "invalid-delivery"
+  | "missing-delivery"
+  | "missing-inventory"
+  | "unsafe-arithmetic";
 
 interface OkLine {
   item: string;

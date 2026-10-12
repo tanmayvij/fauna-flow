@@ -11,4 +11,5 @@ export const UNKNOWN_REASON_LABELS: Record<UnknownReason, string> = {
   "invalid-delivery": "Invalid delivery quantity",
   "missing-delivery": "No delivery record",
   "missing-inventory": "No inventory count",
+  "unsafe-arithmetic": "Calculation exceeds the safe integer range",
 };

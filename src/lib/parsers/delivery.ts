@@ -1,5 +1,10 @@
 import type { DeliveryWarning, QuantityResult } from "@/types/parsers";
-import { normalizeItemName, readQuantity, splitLines } from "./shared";
+import {
+  addQuantities,
+  normalizeItemName,
+  readQuantity,
+  splitLines,
+} from "./shared";
 
 interface ParsedDelivery {
   delivered: ReadonlyMap<string, number | null>; // Total delivered per item, or `null` when any of its values was unusable.
@@ -28,11 +33,18 @@ export function parseDelivery(text: string): ParsedDelivery {
 
     if (!quantity.ok) {
       warnings.push({ line: index + 1, item, message: quantity.message });
+      delivered.set(item, null);
+      return;
     }
-    delivered.set(
-      item,
-      addDelivery(delivered.get(item), quantity.ok ? quantity.value : null),
-    );
+
+    const previous = delivered.get(item);
+    // Once unreliable, later valid deliveries must not restore a partial total.
+    if (previous === null) return;
+    const total = addQuantities(previous ?? 0, quantity.value);
+    if (!total.ok) {
+      warnings.push({ line: index + 1, item, message: total.message });
+    }
+    delivered.set(item, total.ok ? total.value : null);
   });
 
   return { delivered, warnings };
@@ -58,13 +70,4 @@ function readDeliveryValue(raw: string): QuantityResult {
     return { ok: false, message: `Quantity has unmatched quotes: ${value}` };
   }
   return readQuantity(value.slice(1, -1));
-}
-
-/** Repeated deliveries add up, but one unusable value spoils the total. */
-function addDelivery(
-  total: number | null | undefined,
-  quantity: number | null,
-): number | null {
-  if (total === null || quantity === null) return null;
-  return (total ?? 0) + quantity;
 }
